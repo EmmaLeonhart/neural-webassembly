@@ -26,26 +26,17 @@ first, then verify its output against the blog's headline claims.
 
 ## Active
 
-1. **GATED — get explicit user consent before running ANY third-party code, and
-   confirm the remote repo name.** Cloning + running Percepta's `transformer-vm`
-   means executing code we did not write. Per harness safety rules, ask the user
-   and wait. Also confirm the public remote repo name (`replicating-pertepta`
-   appears to be a typo for `percepta` — confirm spelling). Reading the repo's
-   source is fine; *running* it is the gated action.
-
-2. **Create the PUBLIC GitHub repo and push — now, not at the end.**
-   `gh repo create <name> --public --source=. --push`. From here every commit
-   pushes so CI/Pages build as we go.
-
-3. **Add `transformer-vm` as a git submodule** under
-   `replication_target/transformer-vm` (`git submodule add
-   https://github.com/Percepta-Core/transformer-vm replication_target/transformer-vm`).
-   Pin the commit. Record the SHA in `notes/sources.md`.
-
-4. **Stand up the toolchain.** Python 3.11+, `uv`, LLVM/Clang with **wasm32**
-   target, C++17 compiler. **Windows feasibility is the main risk** — if the
-   clang/wasm32 + C++17 + BLAS build won't go on Windows, document it and try WSL
-   or a Linux path (incl. CI on `ubuntu-latest`). Record exactly what was needed.
+4. **Stand up the toolchain (in WSL Ubuntu 24.04).** Windows has no uv/clang/MSVC;
+   the repo only documents macOS + Ubuntu builds, so we run inside the existing
+   `Ubuntu` WSL distro (Python 3.12, 16 CPU / 15Gi). On Linux the C++ engine
+   builds with plain `g++ -std=c++17 -O3` (no BLAS — that path is Apple-only).
+   - **Privileged (needs the user — sudo, can't be automated here):**
+     `sudo apt update && sudo apt install -y build-essential clang lld cmake`
+     (clang+lld give the wasm32 target; build-essential gives g++/make).
+   - **Unprivileged (agent runs these):** install `uv`
+     (`curl -LsSf https://astral.sh/uv/install.sh | sh`), then `uv sync` inside
+     `replication_target/transformer-vm` (pulls torch≥2.10, highspy, ninja…).
+   - Setup is scripted in `scripts/wsl_setup.sh`. Record what was needed.
 
 5. **Run the light path first** (no heavy C++ engine): `uv run wasm-eval` (graph
    evaluator, exact arithmetic) and `uv run pytest -m "not slow"`. These validate
