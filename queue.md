@@ -26,21 +26,12 @@ first, then verify its output against the blog's headline claims.
 
 ## Active
 
-4. **Stand up the toolchain (in WSL Ubuntu 24.04).** Windows has no uv/clang/MSVC;
-   the repo only documents macOS + Ubuntu builds, so we run inside the existing
-   `Ubuntu` WSL distro (Python 3.12, 16 CPU / 15Gi). On Linux the C++ engine
-   builds with plain `g++ -std=c++17 -O3` (no BLAS — that path is Apple-only).
-   - **Privileged (needs the user — sudo, can't be automated here):**
-     `sudo apt update && sudo apt install -y build-essential clang lld cmake`
-     (clang+lld give the wasm32 target; build-essential gives g++/make).
-   - **Unprivileged (agent runs these):** install `uv`
-     (`curl -LsSf https://astral.sh/uv/install.sh | sh`), then `uv sync` inside
-     `replication_target/transformer-vm` (pulls torch≥2.10, highspy, ninja…).
-   - Setup is scripted in `scripts/wsl_setup.sh`. Record what was needed.
-
-5. **Run the light path first** (no heavy C++ engine): `uv run wasm-eval` (graph
-   evaluator, exact arithmetic) and `uv run pytest -m "not slow"`. These validate
-   the VM/graph logic. Capture output to `results/`. Commit.
+5. **Finish the light path.** `uv run wasm-eval` already compiled all 6 programs,
+   generated correct reference traces, and gave `addition: PASS`. Remaining:
+   (a) ask the user to `sudo apt install -y python3-dev` so the `hull_ext` Python
+   extension builds (currently falls back to slow brute-force, impractical for the
+   big programs); (b) re-run `uv run wasm-eval` with the hull extension to PASS the
+   larger programs; (c) `uv run pytest -m "not slow"`. Capture to `results/`. Commit.
 
 6. **Run the full recipe**: `uv run wasm-run`. Capture stdout, example-program
    outputs, and any tokens/sec into `results/`. Commit.

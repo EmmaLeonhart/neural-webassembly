@@ -46,3 +46,22 @@ arXiv paper is kept under `replication_target/source/` as related work only.
   with plain `g++ -std=c++17 -O3` — no BLAS. Setup scripted in
   `scripts/wsl_setup.sh`; only the `apt install build-essential clang lld cmake`
   step needs sudo (handed to the user).
+
+## 2026-06-05 — Toolchain up; first reproduced evidence
+
+- `uv sync` installed all 51 deps (torch 2.10.0, highspy, ninja, pybind11…) in
+  WSL Ubuntu. User installed `build-essential clang lld cmake`; verified
+  `clang --print-targets` has the **wasm32** target and `g++ 13.3.0` is present.
+- **Light path ran:** `uv run wasm-eval` compiled all 6 example C programs to
+  WASM and generated correct **reference traces** (the WASM VM ground truth):
+  hello→`Hello World!`, addition→`19134`, fibonacci→`55`,
+  collatz(7)→`7 22 11 … 1`, min_cost_matching→Hungarian `optimal cost: 9`,
+  **sudoku solved** (`534678912…`, ~1.0M tokens — matches the README's ~900K
+  headline order-of-magnitude). Graph evaluator: `addition: PASS`.
+- **Gap found:** the `hull_ext` Python extension needs `Python.h`
+  (`python3-dev`), which isn't installed, so `wasm-eval` fell back to brute-force
+  O(n) attention (~30 tok/s) — too slow for the big programs. The C++ engine
+  (`wasm-run`) embeds the hull cache as a header and doesn't need it, so it's the
+  path used for the throughput/scale claims. Recorded in `notes/claims.md`.
+- Kicked off `uv run wasm-run` (builds analytic weights via MILP + torch, then
+  the C++ engine, then runs all programs) — the headline ~30K tok/s path.
