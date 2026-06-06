@@ -128,3 +128,17 @@ a WASM VM on real programs. Throughput is ~18–24K tok/s vs the authors' ~30K
 - Wrote the experiment design `notes/experiment_learned_ops.md` (thesis, frozen/
   trainable split, op-local→end-to-end signal, soft/hard τ schedule, crystallization,
   metrics G1–G4, phases E0–E4). Queued E0–E4. **Gated on user approval — no code yet.**
+
+## 2026-06-05 — E0 done: differentiable forward reproduces exact execution
+
+User approved building; E4 north-star op chosen: **saturating arithmetic**. Built
+E0 via TDD (test-first, watched it fail, then implemented):
+- `src/learned_ops/soft_forward.py` — a grad-enabled, batched, causal
+  softmax-attention forward over the constructed weights (mirrors the per-token
+  embedding+position / `Q·K` attention / ReGLU FFN / vocab head, with a temperature
+  knob `tau`). At `tau=1` it equals the reference `StandardKVCache` softmax path.
+- `tests/test_soft_forward.py` — teacher-forces the model's own exact `hello`
+  execution and asserts the forward predicts the same next token at every generated
+  position. **1 passed.** (Ground truth uses `StandardKVCache`, sidestepping the
+  hull_ext/`python3-dev` gap.)
+- This is the foundation we can backprop through. Next: E1 — learn `i32.and`.
