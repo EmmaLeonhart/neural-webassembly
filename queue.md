@@ -50,12 +50,15 @@ ISO_EQUIV_OK). So: transformer ≡ reference.py ≡ Rust ≡ OCaml.
 value-output; AND a documented negative result; findings in
 `notes/learned_ops_findings.md`):
 
-3. **E3 — integrate a learned op as a native opcode (SPEC FIRST).** Wire a learned
-   arithmetic op (e.g. `sat_add_u`) into `wasm/interpreter.py` (is_op-gated) +
-   `reference.py` + `compile_wasm.py`, build weights, pass a program using it
-   end-to-end vs reference (G2). Deep build into the analytic construction — per the
-   hard rails, **write the spec first** (what changes in each file, the byte-level
-   semantics) before implementing; do not blind-hack the construction. Runs in WSL.
+3. **E3 — integrate a native `i32.sat_add_u` opcode (SPEC DONE → impl).** Spec written
+   and grounded: `notes/e3_native_opcode_spec.md` (feasible — overflow precomputable
+   from full operand values; byte semantics, integration points, verification). ⚠️
+   **Implementation gating prerequisite:** study how opcodes get their 2D `op_dot`
+   point (the `x²+y²=32045` vocabulary in `interpreter.py`) and confirm it's
+   extensible before touching the construction. Then implement on a local submodule
+   branch (don't push to Percepta), rebuild weights, pass end-to-end vs reference
+   (G2), confirm no regression on the 6 programs + re-run `scripts/iso_equiv.sh`. Deep
+   surgery — do NOT blind-hack; only proceed once the op_dot vocabulary is understood.
 
 **Optional:** hull Python path (`sudo apt install -y python3-dev`, then
 `uv run wasm-eval --hull` / `pytest -m "not slow"`; quantify hull vs `--nohull`).

@@ -279,3 +279,23 @@ never loaded. Fixed the base case to `k >= len`.
 **`scripts/iso_equiv.sh`: 6/6 programs byte-identical across Python ref, Rust, and
 OCaml — ISO_EQUIV_OK.** So: autoregressive transformer ≡ reference.py ≡ Rust ≡ OCaml.
 Three of four isomorphism stages complete. ISO-5 (Sutra) needs user input on Sutra.
+
+## 2026-06-05 — E3 spec written; barrel reached its walls
+
+Wrote `notes/e3_native_opcode_spec.md` (spec-first per hard rails). Corrected an
+initial wrong intuition: a native saturating-add opcode IS feasible because the
+construction exposes the full 32-bit operand values (stack_top_value/
+stack_second_value, used by the comparison ops), so the overflow flag is
+precomputable up-front and each byte saturated by it — reusing the existing
+add_byte/add_carry machinery. Spec covers byte semantics, integration points
+(reference.py + both isomorphs, interpreter.py result_byte/result_carry,
+compile_wasm.py, a test program), verification (G2 + no-regression + iso_equiv), and
+flags the gating prerequisite: understand the `op_dot` 2D opcode-vocabulary
+(x²+y²=32045) before touching the construction.
+
+**Walls reached (honest stop for the autonomous barrel):**
+- ISO-5 (Sutra) — needs the user to define Sutra (syntax/semantics/toolchain).
+- E3 implementation — real surgery on the analytic construction; spec done, but
+  per hard rails do NOT implement until the op_dot vocabulary is understood.
+- Yantra P0–P6 — large design-complete builds, not single-tick items.
+- Optional hull path — needs `python3-dev` (sudo).
