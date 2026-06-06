@@ -21,17 +21,13 @@ reusable, agent-executable replication methodology.
   end). Find and run it FIRST, then verify its output against the paper and
   fill only the gaps. A from-scratch reimplementation is the fallback, not the
   default — it is what burned a huge amount of tokens before this convention.
-- **`replication_target/`** holds the paper and everything pulled *about* it:
-  - `replication_target/source/` — the extracted arXiv **LaTeX/e-print
-    source** (committed; run `python download_paper.py`). **Primary** source:
-    the `.tex` reads far more token-efficiently than the rendered HTML (no
-    base64 figure blobs) and is where the reproduction recipe usually lives.
-  - `replication_target/arxiv-source.tar.gz` — the raw source archive
-    (gitignored; the extracted `source/` is what's committed).
-  - `replication_target/paper.pdf` — the PDF, as a fallback / complete record
-    (gitignored, same downloader). The paper does NOT go in `data_lake/`.
-  - the authors' code, if any, cloned as a **git submodule** in here
-    (`git submodule add <repo> replication_target/<name>`).
+- **`replication_target/`** holds the real target:
+  - `replication_target/transformer-vm/` — the authors' code as a **git
+    submodule** (this is what we replicate; ships the reproduction recipe).
+  - NOTE: the scaffolder's `download_paper.py` extracted the unrelated arXiv
+    paper "Neural Computers" (2604.06425) into `replication_target/source/` and
+    committed it. That was wrong — it is **not** our target — and it has been
+    **purged from the repository and from git history**. Do not re-add it.
 - **`replication_skill.md`** (repo root) — if the source/paper ships a
   reproduction recipe, copy it here and run it first. **`replication/`** — if a
   replication zip is shipped/linked, extract it here (the zip is gitignored,
