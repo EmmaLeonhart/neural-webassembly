@@ -299,3 +299,14 @@ flags the gating prerequisite: understand the `op_dot` 2D opcode-vocabulary
   per hard rails do NOT implement until the op_dot vocabulary is understood.
 - Yantra P0–P6 — large design-complete builds, not single-tick items.
 - Optional hull path — needs `python3-dev` (sudo).
+
+## 2026-06-05 — Work-loop tick: E3a (op_dot vocabulary) resolved
+
+SYNC: up to date, clean. WORK: ISO-5 (Sutra) blocked on user, so did the E3 gating
+prerequisite E3a — study the `op_dot` opcode-dispatch vocabulary. Verified numerically
+(`scripts/wsl_check_opdot.sh`): `interpreter.py` has 64 dispatch points on x²+y²=32045,
+OPCODES uses 36 (28 spare), and the **max pairwise dot is 32037 ≤ 32043** across the
+whole set — so `op_dot`'s stepglu indicator separates any subset. The vocabulary is
+**fully extensible**; adding `i32.sat_add_u` as opcode #37 is clean on dispatch. E3
+gating concern resolved; updated `notes/e3_native_opcode_spec.md`. The remaining E3
+build is a focused multi-file effort for its own session.

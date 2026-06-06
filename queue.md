@@ -50,15 +50,15 @@ ISO_EQUIV_OK). So: transformer ≡ reference.py ≡ Rust ≡ OCaml.
 value-output; AND a documented negative result; findings in
 `notes/learned_ops_findings.md`):
 
-3. **E3 — integrate a native `i32.sat_add_u` opcode (SPEC DONE → impl).** Spec written
-   and grounded: `notes/e3_native_opcode_spec.md` (feasible — overflow precomputable
-   from full operand values; byte semantics, integration points, verification). ⚠️
-   **Implementation gating prerequisite:** study how opcodes get their 2D `op_dot`
-   point (the `x²+y²=32045` vocabulary in `interpreter.py`) and confirm it's
-   extensible before touching the construction. Then implement on a local submodule
-   branch (don't push to Percepta), rebuild weights, pass end-to-end vs reference
-   (G2), confirm no regression on the 6 programs + re-run `scripts/iso_equiv.sh`. Deep
-   surgery — do NOT blind-hack; only proceed once the op_dot vocabulary is understood.
+3. **E3 — integrate a native `i32.sat_add_u` opcode (SPEC DONE, gating RESOLVED → impl).**
+   Spec: `notes/e3_native_opcode_spec.md`. E3a done: the `op_dot` vocabulary is
+   verified **extensible** (64 points, 28 spare; max pairwise dot 32037 ≤ 32043 —
+   `scripts/wsl_check_opdot.sh`), so adding opcode #37 is clean on dispatch. Remaining
+   = the build itself (a focused multi-file effort, do it as its own session): add to
+   `OPCODES`/`STACK_DELTA`, the `result_byte`/`result_carry` terms, `reference.py` +
+   both isomorphs, `compile_wasm.py`, a test program; rebuild weights (verify MILP
+   solves); pass end-to-end vs reference (G2); no regression on the 6 programs;
+   re-run `scripts/iso_equiv.sh`. On a local submodule branch (don't push to Percepta).
 
 **Optional:** hull Python path (`sudo apt install -y python3-dev`, then
 `uv run wasm-eval --hull` / `pytest -m "not slow"`; quantify hull vs `--nohull`).

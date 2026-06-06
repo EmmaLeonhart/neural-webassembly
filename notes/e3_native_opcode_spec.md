@@ -70,12 +70,27 @@ result_carry = (1 - overflow) * add_carry                        # no carry once
   perturb them — verify, don't assume).
 - Re-run `scripts/iso_equiv.sh` (Rust/OCaml updated) → still ISO_EQUIV_OK.
 
-## Risks / open questions
+## op_dot vocabulary — RESOLVED (E3a, verified)
 
-- **op_dot vocabulary / 2D opcode encoding.** New opcodes get a 2D `(opcode_x,
-  opcode_y)` point on the `x²+y²=32045` circle (`interpreter.py` header). Need to
-  confirm how opcodes are assigned points and that adding one doesn't collide or break
-  the `op_dot` separation. **This is the main thing to study before implementing.**
+The dispatch vocabulary is **fully extensible** (checked numerically,
+`scripts/wsl_check_opdot.sh`):
+- `interpreter.py` defines **64** dispatch points (all on `x²+y²=32045`); `OPCODES`
+  uses **36** of them (`OPCODE_POINT = {op: points[i] for i,op in enumerate(OPCODES)}`),
+  so **28 are spare**.
+- `op_dot(op)` detects op P iff every distinct used pair has `P·Q ≤ 32043` (so the
+  `stepglu` indicator is strictly 0 off-match; match gives `P·P − 32044 = 1`).
+- **Max pairwise dot across ALL 64 points is 32037 ≤ 32043** — so separation holds for
+  *any* subset, including 37, 38, … opcodes. Adding `i32.sat_add_u` as opcode #37
+  (next spare point `points[36]`) is clean.
+
+To add the opcode: append to `OPCODES` (fresh WASM byte + auto-assigned next point),
+add its `STACK_DELTA`/`STS_OPS` membership, and the `result_byte`/`result_carry`
+terms above. No collision risk on dispatch.
+
+## Remaining risks / open questions
+
+- **MILP/scheduling.** A new gate adds dims; the MILP should absorb it, but d_model /
+  layer budget may shift. Verify the build still solves and runs.
 - **MILP/scheduling.** A new gate adds dims; the MILP should absorb it, but d_model /
   layer budget may shift. Verify the build still solves.
 - **Relationship to the learned op.** This native op is *constructed* (exact, by
