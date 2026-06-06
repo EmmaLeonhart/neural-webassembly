@@ -24,24 +24,28 @@ first, then verify its output against the blog's headline claims.
 
 ---
 
-## Active — NEW THREAD: learn new CPU operations on the scaffold
+## Active — learn new CPU operations on the scaffold
 
-The replication is complete (REPLICATED, 6/6). New research direction (user's
-vision): train *new CPU operations* on the frozen analytic scaffold, then
-crystallize them to exact weights — the constructed+trained hybrid toward a
-Completely Neural Computer. Full design + grounding + metrics in
-`notes/experiment_learned_ops.md`. **Gated on user approval of the design + choice
-of the novel op (E4).** No code until approved.
+Replication complete (REPLICATED, 6/6). Research thread: train *new CPU operations*
+on the differentiable scaffold, then crystallize to exact weights — the
+constructed+trained hybrid toward a Completely Neural Computer. Design + findings in
+`notes/experiment_learned_ops.md`. **E0–E2 DONE** (see `devlog.md`):
+- E0 — grad-enabled forward reproduces exact execution.
+- E1 — learned **unsigned saturating add** to 100% exact (value-output). AND is a
+  documented negative result (spectral bias; no runtime bit decomposition).
+- E2 — crystallized sat_add to one exact ReGLU neuron; learned == crystallized on all
+  65 536 pairs.
 
-- **E1** — freeze/trainable split + op-local trainer; learn `i32.and` to 100% exact
-  (G1) on all 65 536 byte pairs at τ→∞. (E0 done: `src/learned_ops/soft_forward.py`
-  reproduces the constructed model's exact execution, verified by
-  `tests/test_soft_forward.py`.)
-- **E2** — crystallize AND to exact DSL weights (G3); confirm no regression on the
-  other ops (G4).
-- **E3** — repeat for `i32.mul` (carry-bearing); wire it as a native opcode and pass
-  end-to-end vs reference (G2).
-- **E4** — pick the genuinely *new* op with the user; learn + crystallize; write up.
+Remaining:
+- **E3 — integrate as a native opcode.** Wire crystallized `sat_add_u` into the WASM
+  interpreter as a real opcode (gated by `is_op`), build weights, and pass a program
+  that uses it end-to-end through the transformer vs a reference trace (G2). This is
+  the bigger build (touches `wasm/interpreter.py`, opcode tables, `compile_wasm.py`).
+- **E4 — more learned ops / write-up.** Signed saturating add/sub, min/max, etc.;
+  consolidate the negative (AND) + positive (sat_add) results into a short findings
+  note. (sat_add — the original E4 north-star op — is already learned op-local.)
+- **Yantra OS integration** — the forward goal; design in
+  `notes/yantra_integration.md` (trap-and-resume; P0–P6 roadmap).
 
 ## Optional / nice-to-have (replication already succeeds without these)
 
