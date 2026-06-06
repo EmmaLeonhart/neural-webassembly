@@ -33,12 +33,10 @@ Completely Neural Computer. Full design + grounding + metrics in
 `notes/experiment_learned_ops.md`. **Gated on user approval of the design + choice
 of the novel op (E4).** No code until approved.
 
-- **E0** — build a grad-enabled softmax-attention forward over the loaded analytic
-  weights (the shipped forward is inference-only `@torch.no_grad()` + argmax,
-  `model/transformer.py:41-69`); prove it matches the argmax forward at high τ on an
-  existing op. Lives in `src/learned_ops/`.
 - **E1** — freeze/trainable split + op-local trainer; learn `i32.and` to 100% exact
-  (G1) on all 65 536 byte pairs at τ→∞.
+  (G1) on all 65 536 byte pairs at τ→∞. (E0 done: `src/learned_ops/soft_forward.py`
+  reproduces the constructed model's exact execution, verified by
+  `tests/test_soft_forward.py`.)
 - **E2** — crystallize AND to exact DSL weights (G3); confirm no regression on the
   other ops (G4).
 - **E3** — repeat for `i32.mul` (carry-bearing); wire it as a native opcode and pass
