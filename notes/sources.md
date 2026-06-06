@@ -24,7 +24,7 @@ a typo for "percepta"; confirm before creating the public repo).
 | 2 | Percepta blog: "Can LLMs Be Computers?" | https://www.percepta.ai/blog/can-llms-be-computers | Claims / framing |
 | 3 | LinkedIn post (Vlad Larichev) | https://www.linkedin.com/posts/vladlarichev_a-major-shift-is-happening-in-the-llm-activity-7439246178526892032-poGU | Announcement |
 | 4 | Medium: "I built a tiny computer inside a transformer" (Sean Moran) | https://medium.com/data-science-collective/i-built-a-tiny-computer-inside-a-transformer-e3000a0019b3 | Third-party explainer (a *simpler* compile-program-into-weights variant, not the Percepta interpreter) |
-| — | arXiv:2604.06425 "Neural Computers" | https://arxiv.org/abs/2604.06425 | Related work only — in `replication_target/source/` |
+| — | arXiv:2604.06425 "Neural Computers" | https://arxiv.org/abs/2604.06425 | Unrelated paper the scaffolder wrongly extracted; **purged from repo + history**. Not our target. |
 
 ## The GitHub repo (transformer-vm) — structure & recipe
 

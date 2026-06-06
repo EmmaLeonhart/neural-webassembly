@@ -17,10 +17,10 @@
 · [Medium write-up](https://medium.com/data-science-collective/i-built-a-tiny-computer-inside-a-transformer-e3000a0019b3)
 **No arXiv** — this work is published as code + blog, not a paper.
 
-> Note: this repo was scaffolded against the arXiv paper *"Neural Computers"*
-> (arXiv:2604.06425) because the scaffolder requires an arXiv ID. That paper is
-> a conceptual cousin and is kept under `replication_target/source/` as
-> **related work only** — it is **not** what we are replicating.
+> Note: this repo was scaffolded against the unrelated arXiv paper *"Neural
+> Computers"* (arXiv:2604.06425) because the scaffolder requires an arXiv ID. Its
+> extracted source was wrongly committed and has been **purged from the repo and
+> git history** — it is **not** what we are replicating.
 
 ## What we are replicating
 
